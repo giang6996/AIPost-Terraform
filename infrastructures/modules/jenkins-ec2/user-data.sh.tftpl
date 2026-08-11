@@ -1,0 +1,39 @@
+#!/bin/bash
+set -euxo pipefail
+
+# 1. Update packages
+dnf update -y
+
+# 2. Install utilities and runtime dependencies
+dnf install -y \
+  wget \
+  java-21-amazon-corretto \
+  git \
+  awscli \
+  docker \
+  nodejs22 \
+  nodejs22-npm
+
+# 3. Configure the Jenkins LTS repository
+wget -O /etc/yum.repos.d/jenkins.repo \
+  https://pkg.jenkins.io/rpm-stable/jenkins.repo
+
+rpm --import \
+  https://pkg.jenkins.io/rpm-stable/jenkins.io-2026.key
+
+# 4. Install Jenkins
+dnf install -y jenkins
+
+# 5. Enable and start Docker
+systemctl enable docker
+systemctl start docker
+
+# 6. Let Jenkins use Docker
+usermod -aG docker jenkins
+
+# 7. Enable and start Jenkins
+systemctl enable jenkins
+systemctl start jenkins
+
+# 8. Restart Jenkins so group membership is applied
+systemctl restart jenkins

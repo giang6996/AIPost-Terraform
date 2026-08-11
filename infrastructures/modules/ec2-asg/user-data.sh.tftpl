@@ -1,0 +1,48 @@
+#!/bin/bash
+set -euxo pipefail
+
+dnf update -y
+dnf install -y docker awscli
+
+systemctl enable docker
+systemctl start docker
+
+aws ecr get-login-password --region ${aws_region} \
+  | docker login \
+    --username AWS \
+    --password-stdin \
+    $(echo "${ecr_repository_url}" | cut -d/ -f1)
+
+docker pull "${ecr_repository_url}:${container_image_tag}"
+
+docker rm -f aipost-backend || true
+
+DATABASE_URL=$(aws ssm get-parameter \
+  --name "${ssm_parameter_prefix}/DATABASE_URL" \
+  --with-decryption \
+  --region "${aws_region}" \
+  --query "Parameter.Value" \
+  --output text)
+
+ENCRYPTION_KEY=$(aws ssm get-parameter \
+  --name "${ssm_parameter_prefix}/ENCRYPTION_KEY" \
+  --with-decryption \
+  --region "${aws_region}" \
+  --query "Parameter.Value" \
+  --output text)
+
+docker run -d \
+  --name aipost-backend \
+  --restart unless-stopped \
+  -p ${backend_port}:${backend_port} \
+  -e PORT="${backend_port}" \
+  -e NODE_ENV="production" \
+  -e DATABASE_URL="$DATABASE_URL" \
+  -e ENCRYPTION_KEY="$ENCRYPTION_KEY" \
+  -e CORS_ORIGINS="${cors_origins}" \
+  -e MEDIA_STORAGE_PROVIDER="${media_storage_provider}" \
+  -e MEDIA_PUBLIC_BASE_URL="${media_public_base_url}" \
+  -e S3_BUCKET_NAME="${s3_bucket_name}" \
+  -e AWS_REGION="${aws_region}" \
+  -e SSM_PARAMETER_PREFIX="${ssm_parameter_prefix}" \
+  "${ecr_repository_url}:${container_image_tag}"
