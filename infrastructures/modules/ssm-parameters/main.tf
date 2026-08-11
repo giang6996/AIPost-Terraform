@@ -27,3 +27,24 @@ resource "aws_ssm_parameter" "encryption_key" {
     }
   )
 }
+
+resource "aws_ssm_parameter" "backend_image_tag" {
+  name        = "/aipost/${var.environment}/backend/IMAGE_TAG"
+  description = "Currently deployed AIPost backend image tag."
+  type        = "String"
+
+  value = var.initial_backend_image_tag
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "backend-release-version"
+    }
+  )
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}

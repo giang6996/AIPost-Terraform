@@ -1,3 +1,8 @@
+variable "environment" {
+  description = "Local Deploy Environment Name for backend image tag"
+  type = string
+}
+
 variable "parameter_prefix" {
   description = "Hierarchical Parameter Store path used by the backend."
   type        = string
@@ -6,6 +11,12 @@ variable "parameter_prefix" {
     condition     = startswith(var.parameter_prefix, "/")
     error_message = "parameter_prefix must begin with '/'."
   }
+}
+
+variable "initial_backend_image_tag" {
+  description = "Initial backend Docker image tag before CI/CD takes ownership."
+  type        = string
+  default     = "demo"
 }
 
 variable "database_url" {

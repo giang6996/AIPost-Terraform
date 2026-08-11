@@ -13,7 +13,15 @@ aws ecr get-login-password --region ${aws_region} \
     --password-stdin \
     $(echo "${ecr_repository_url}" | cut -d/ -f1)
 
-docker pull "${ecr_repository_url}:${container_image_tag}"
+IMAGE_TAG=$(aws ssm get-parameter \
+  --name "${ssm_parameter_prefix}/IMAGE_TAG" \
+  --region "${AWS_REGION}" \
+  --query 'Parameter.Value' \
+  --output text)
+
+IMAGE_URI="${ecr_repository_url}:${IMAGE_TAG}"
+
+docker pull "${IMAGE_URI}"
 
 docker rm -f aipost-backend || true
 
@@ -45,4 +53,4 @@ docker run -d \
   -e S3_BUCKET_NAME="${s3_bucket_name}" \
   -e AWS_REGION="${aws_region}" \
   -e SSM_PARAMETER_PREFIX="${ssm_parameter_prefix}" \
-  "${ecr_repository_url}:${container_image_tag}"
+  "${IMAGE_URI}"

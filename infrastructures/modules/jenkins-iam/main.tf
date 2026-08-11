@@ -72,6 +72,44 @@ data "aws_iam_policy_document" "jenkins_deploy" {
     ]
   }
 
+  statement {
+    sid    = "UpdateBackendReleaseTag"
+    effect = "Allow"
+
+    actions = [
+      "ssm:PutParameter"
+    ]
+
+    resources = [
+      var.backend_image_tag_parameter_arn
+    ]
+  }
+
+  statement {
+    sid    = "StartBackendInstanceRefresh"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:StartInstanceRefresh"
+    ]
+
+    resources = [
+      var.backend_asg_arn
+    ]
+  }
+
+  statement {
+    sid    = "DescribeBackendDeployment"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:DescribeInstanceRefreshes",
+      "autoscaling:DescribeAutoScalingGroups"
+    ]
+
+    resources = ["*"]
+  }
+
 }
 
 resource "aws_iam_role" "jenkins" {

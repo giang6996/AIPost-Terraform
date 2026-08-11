@@ -5,3 +5,7 @@ output "launch_template_id" {
 output "autoscaling_group_name" {
   value = aws_autoscaling_group.backend.name
 }
+
+output "autoscaling_arn" {
+  value = aws_autoscaling_group.backend.arn
+}

@@ -13,6 +13,15 @@ variable "frontend_bucket_arn" {
   type        = string
 }
 
+variable "backend_image_tag_parameter_arn" {
+  description = "ARN of the backend IMAGE_TAG deployment parameter."
+  type        = string
+}
+
+variable "backend_asg_arn" {
+  type = string
+}
+
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."
   type        = map(string)

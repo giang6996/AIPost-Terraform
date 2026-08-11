@@ -82,6 +82,8 @@ module "rds_postgresql" {
 module "ssm_parameters" {
   source = "../../modules/ssm-parameters"
 
+  environment = local.environment
+
   parameter_prefix = "/aipost/${local.environment}/backend"
 
   database_url   = local.database_url
@@ -290,7 +292,11 @@ module "jenkins_iam" {
 
   ecr_repository_arn = module.ecr.repository_arn
 
+  backend_asg_arn = module.ec2_asg.autoscaling_arn
+
   frontend_bucket_arn = module.s3_frontend.bucket_arn
+
+  backend_image_tag_parameter_arn = module.ssm_parameters.backend_image_tag_parameter_arn
 
   common_tags = local.common_tags
 }
