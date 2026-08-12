@@ -113,6 +113,18 @@ resource "aws_vpc_security_group_egress_rule" "rds_all_outbound" {
   cidr_ipv4   = "0.0.0.0/0"
 }
 
+resource "aws_vpc_security_group_ingress_rule" "rds_from_jenkins" {
+  security_group_id = aws_security_group.rds.id
+
+  referenced_security_group_id = aws_security_group.jenkins.id
+
+  ip_protocol = "tcp"
+  from_port   = 5432
+  to_port     = 5432
+
+  description = "Allow Jenkins CI/CD migration runner to access PostgreSQL"
+}
+
 
 resource "aws_security_group" "jenkins" {
   name        = "${var.name_prefix}-jenkins-sg"

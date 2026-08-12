@@ -21,6 +21,10 @@ variable "backend_image_tag_parameter_arn" {
 variable "backend_asg_arn" {
   type = string
 }
+variable "database_url_parameter_arn" {
+  description = "ARN of the RDS database url parameter"
+  type = string
+}
 
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."

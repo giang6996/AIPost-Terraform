@@ -110,6 +110,19 @@ data "aws_iam_policy_document" "jenkins_deploy" {
     resources = ["*"]
   }
 
+  statement {
+    sid    = "ReadProductionDatabaseUrl"
+    effect = "Allow"
+
+    actions = [
+      "ssm:GetParameter"
+    ]
+
+    resources = [
+      var.database_url_parameter_arn
+    ]
+  }
+
 }
 
 resource "aws_iam_role" "jenkins" {
