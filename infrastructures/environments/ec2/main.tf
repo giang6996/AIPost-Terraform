@@ -299,6 +299,8 @@ module "jenkins_iam" {
 
   frontend_bucket_arn = module.s3_frontend.bucket_arn
 
+  database_url_parameter_arn = module.ssm_parameters.database_url_parameter_arn
+
   backend_image_tag_parameter_arn = module.ssm_parameters.backend_image_tag_parameter_arn
 
   common_tags = local.common_tags
