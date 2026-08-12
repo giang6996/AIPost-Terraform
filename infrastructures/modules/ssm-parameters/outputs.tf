@@ -17,3 +17,8 @@ output "encryption_key_parameter_arn" {
   description = "ARN of the ENCRYPTION_KEY parameter."
   value       = aws_ssm_parameter.encryption_key.arn
 }
+
+output "backend_image_tag_parameter_arn" {
+  description = "ARN of the IMAGE_TAG parameter."
+  value       = aws_ssm_parameter.backend_image_tag.arn
+}
