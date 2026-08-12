@@ -1,14 +1,19 @@
-variable "environment" {
-  description = "Local Deploy Environment Name for backend image tag"
-  type = string
-}
-
 variable "parameter_prefix" {
   description = "Hierarchical Parameter Store path used by the backend."
   type        = string
 
   validation {
     condition     = startswith(var.parameter_prefix, "/")
+    error_message = "parameter_prefix must begin with '/'."
+  }
+}
+
+variable "parameter_frontend_prefix" {
+  description = "Hierarchical Parameter Store path used by the frontend."
+  type        = string
+
+  validation {
+    condition     = startswith(var.parameter_frontend_prefix, "/")
     error_message = "parameter_prefix must begin with '/'."
   }
 }
@@ -34,6 +39,18 @@ variable "encryption_key" {
     condition     = length(var.encryption_key) >= 32
     error_message = "encryption_key must contain at least 32 characters."
   }
+}
+
+variable "s3_frontend_bucket" {
+  description = "Front-end S3 bucket name used by AIPost Static Vue Application."
+  type        = string
+}
+
+# This is not considered a secret, but for best practice must still apply sensitive
+variable "frontend_tinymce_api_key" {
+  description = "TinyMCE API key injected into the AIPost frontend during the Vite build."
+  type        = string
+  sensitive   = true
 }
 
 variable "kms_key_id" {

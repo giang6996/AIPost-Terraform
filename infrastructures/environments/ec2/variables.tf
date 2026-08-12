@@ -111,6 +111,11 @@ variable "ssm_parameter_prefix" {
   }
 }
 
+variable "frontend_tinymce_api_key" {
+  description = "Front-end S3 bucket name used by AIPost Static Vue Application."
+  type        = string
+}
+
 variable "backend_port" {
   description = "Port exposed by the AIPost Node.js backend."
   type        = number

@@ -82,9 +82,12 @@ module "rds_postgresql" {
 module "ssm_parameters" {
   source = "../../modules/ssm-parameters"
 
-  environment = local.environment
-
   parameter_prefix = "/aipost/${local.environment}/backend"
+
+  parameter_frontend_prefix = "/aipost/${local.environment}/frontend"
+
+  s3_frontend_bucket = module.s3_frontend.bucket_name
+  frontend_tinymce_api_key = var.frontend_tinymce_api_key
 
   database_url   = local.database_url
   encryption_key = var.encryption_key
