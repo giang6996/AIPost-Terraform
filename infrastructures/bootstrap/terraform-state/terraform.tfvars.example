@@ -1,0 +1,8 @@
+aws_profile = "default"
+
+aws_region = "ap-southeast-1"
+
+noncurrent_state_retention_days = 30
+
+# Change the bucket name
+state_bucket_name = "aipost-terraform-tfstate-108f95d415cf400172f3e"
