@@ -14,7 +14,6 @@ resource "aws_cloudfront_distribution" "frontend" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  # For debug
   count = var.enable_distribution ? 1 : 0
 
   aliases = [
@@ -91,7 +90,6 @@ resource "aws_cloudfront_distribution" "frontend" {
 
 data "aws_iam_policy_document" "frontend_bucket" {
 
-  # Debug
   count = var.enable_distribution ? 1 : 0
 
   statement {
@@ -124,7 +122,6 @@ data "aws_iam_policy_document" "frontend_bucket" {
 }
 
 resource "aws_s3_bucket_policy" "frontend_cloudfront" {
-  # Debug
   count = var.enable_distribution ? 1 : 0
 
   bucket = var.frontend_bucket_id

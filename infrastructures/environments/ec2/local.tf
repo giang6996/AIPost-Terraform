@@ -2,6 +2,7 @@ locals {
   project     = "aipost"
   environment = "ec2"
   name_prefix = "${local.project}-${local.environment}"
+  parameter_prefix = "/${local.project}/${local.environment}"
 
   # Bucket name using current account ID to ensure globalally uniqueness
   frontend_bucket_name = "${local.name_prefix}-frontend-${data.aws_caller_identity.current.account_id}"

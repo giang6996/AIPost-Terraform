@@ -1,15 +1,15 @@
-variable "parameter_prefix" {
-  description = "Hierarchical Parameter Store path used by the backend."
+variable "parameter_api_prefix" {
+  description = "Hierarchical Parameter Store API path used by the backend."
   type        = string
 
   validation {
-    condition     = startswith(var.parameter_prefix, "/")
+    condition     = startswith(var.parameter_api_prefix, "/")
     error_message = "parameter_prefix must begin with '/'."
   }
 }
 
 variable "parameter_frontend_prefix" {
-  description = "Hierarchical Parameter Store path used by the frontend."
+  description = "Hierarchical Parameter Store Front-end path used by the frontend."
   type        = string
 
   validation {
@@ -41,8 +41,28 @@ variable "encryption_key" {
   }
 }
 
+variable "ecr_repository_url" {
+  description = "ECR repository full URL for AIPost image"
+  type        = string
+}
+
+variable "backend_asg_name" {
+  description = "Auto Scalling Group for AIPost Backend Application"
+  type        = string
+}
+
 variable "s3_frontend_bucket" {
   description = "Front-end S3 bucket name used by AIPost Static Vue Application."
+  type        = string
+}
+
+variable "app_url" {
+  description = "Front-end url for AIPost Static Vue Application."
+  type        = string
+}
+
+variable "api_url" {
+  description = "Api url for AIPost Backend Application."
   type        = string
 }
 

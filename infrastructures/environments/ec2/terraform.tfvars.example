@@ -1,4 +1,4 @@
-aws_profile = "personal"
+aws_profile = "default"
 
 aws_region = "ap-southeast-1"
 
