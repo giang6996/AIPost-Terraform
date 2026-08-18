@@ -23,7 +23,7 @@ variable "backend_asg_arn" {
 }
 variable "database_url_parameter_arn" {
   description = "ARN of the RDS database url parameter"
-  type = string
+  type        = string
 }
 
 variable "common_tags" {

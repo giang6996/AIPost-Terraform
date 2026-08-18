@@ -86,15 +86,15 @@ module "ssm_parameters" {
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
 
-  database_url   = local.database_url
-  encryption_key = var.encryption_key
+  database_url     = local.database_url
+  encryption_key   = var.encryption_key
   backend_asg_name = module.ec2_asg.autoscaling_group_name
 
   ecr_repository_url = module.ecr.repository_url
-  api_url = var.api_domain_name
+  api_url            = var.api_domain_name
 
-  app_url = var.frontend_domain_name
-  s3_frontend_bucket = module.s3_frontend.bucket_name
+  app_url                  = var.frontend_domain_name
+  s3_frontend_bucket       = module.s3_frontend.bucket_name
   frontend_tinymce_api_key = var.frontend_tinymce_api_key
 
 

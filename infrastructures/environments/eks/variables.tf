@@ -9,23 +9,6 @@ variable "aws_profile" {
   type        = string
 }
 
-variable "project_name" {
-  description = "Project name used for AWS resource naming."
-  type        = string
-  default     = "aipost"
-}
-
-variable "aws_region" {
-  description = "AWS region for the EKS environment."
-  type        = string
-  default     = "ap-southeast-1"
-}
-
-variable "aws_profile" {
-  description = "AWS CLI profile used by Terraform locally."
-  type        = string
-}
-
 variable "vpc_cidr" {
   description = "CIDR block for the AIPost VPC."
   type        = string

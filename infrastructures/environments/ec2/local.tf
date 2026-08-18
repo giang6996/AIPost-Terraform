@@ -1,7 +1,7 @@
 locals {
-  project     = "aipost"
-  environment = "ec2"
-  name_prefix = "${local.project}-${local.environment}"
+  project          = "aipost"
+  environment      = "ec2"
+  name_prefix      = "${local.project}-${local.environment}"
   parameter_prefix = "/${local.project}/${local.environment}"
 
   # Bucket name using current account ID to ensure globalally uniqueness
