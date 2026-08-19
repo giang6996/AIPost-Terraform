@@ -30,6 +30,11 @@ variable "node_max_size" {
   type = number
 }
 
+variable "secrets_store_provider_version" {
+  description = "EKS add-on version for the AWS Secrets Store CSI provider."
+  type        = string
+}
+
 variable "common_tags" {
   type    = map(string)
   default = {}

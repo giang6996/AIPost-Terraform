@@ -21,7 +21,7 @@ variable "parameter_frontend_prefix" {
 variable "initial_backend_image_tag" {
   description = "Initial backend Docker image tag before CI/CD takes ownership."
   type        = string
-  default     = "demo"
+  default     = null
 }
 
 variable "database_url" {
@@ -49,6 +49,7 @@ variable "ecr_repository_url" {
 variable "backend_asg_name" {
   description = "Auto Scalling Group for AIPost Backend Application"
   type        = string
+  default     = null
 }
 
 variable "s3_frontend_bucket" {

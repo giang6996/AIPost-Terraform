@@ -62,6 +62,7 @@ module "rds_postgresql" {
   database_name   = var.database_name
   master_username = var.database_username
   master_password = var.database_password
+  database_port   = var.database_port
 
   engine_version = var.database_engine_version
   instance_class = var.database_instance_class
@@ -89,6 +90,7 @@ module "ssm_parameters" {
   database_url     = local.database_url
   encryption_key   = var.encryption_key
   backend_asg_name = module.ec2_asg.autoscaling_group_name
+  initial_backend_image_tag = "demo"
 
   ecr_repository_url = module.ecr.repository_url
   api_url            = var.api_domain_name

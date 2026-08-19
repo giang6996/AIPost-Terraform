@@ -80,6 +80,24 @@ resource "aws_eks_node_group" "backend" {
   tags = var.common_tags
 }
 
+resource "aws_eks_addon" "pod_identity_agent" {
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = "eks-pod-identity-agent"
+
+  tags = var.common_tags
+}
+
+resource "aws_eks_addon" "secrets_store_provider" {
+  cluster_name = aws_eks_cluster.this.name
+
+  addon_name = "aws-secrets-store-csi-driver-provider"
+
+  addon_version = var.secrets_store_provider_version
+
+  tags = var.common_tags
+}
+
+
 data "aws_iam_policy_document" "eks_cluster_assume_role" {
   statement {
     effect = "Allow"

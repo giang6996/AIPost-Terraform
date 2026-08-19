@@ -40,6 +40,6 @@ output "frontend_tinymce_api_key_parameter_arn" {
 
 output "backend_image_tag_parameter_arn" {
   description = "ARN of the IMAGE_TAG parameter."
-  value       = aws_ssm_parameter.backend_image_tag.arn
+  value       = aws_ssm_parameter.backend_image_tag[*].arn
 }
 

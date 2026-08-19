@@ -18,6 +18,44 @@ module "networking" {
   common_tags = local.common_tags
 }
 
+module "security" {
+  source = "../../modules/security"
+
+  name_prefix = local.name_prefix
+  vpc_id      = module.networking.vpc_id
+
+  backend_port  = var.backend_port
+  database_port = var.database_port
+
+  common_tags = local.common_tags
+}
+
+module "s3_frontend" {
+  source = "../../modules/s3-fe"
+
+  bucket_name = local.frontend_bucket_name
+  common_tags = local.common_tags
+}
+
+module "s3_media" {
+  source = "../../modules/s3-media"
+
+  bucket_name = local.media_bucket_name
+  common_tags = local.common_tags
+}
+
+module "s3_vpc_endpoint" {
+  source = "../../modules/s3-vpc-endpoint"
+
+  name_prefix = local.name_prefix
+  aws_region  = var.aws_region
+  vpc_id      = module.networking.vpc_id
+
+  route_table_ids = module.networking.private_app_route_table_ids
+
+  common_tags = local.common_tags
+}
+
 module "eks" {
   source = "../../modules/eks"
 
@@ -35,5 +73,110 @@ module "eks" {
 
   node_max_size = var.eks_node_max_size
 
+  secrets_store_provider_version = var.secrets_store_provider_version
+
   common_tags = local.common_tags
+}
+
+module "eks-workload-iam" {
+  source = "../../modules/eks-workload-iam"
+
+  name_prefix = local.name_prefix
+
+  cluster_name = module.eks.cluster_name
+
+  namespace = var.namespace
+
+  service_account = var.service_account
+  
+  media_bucket_arn = module.s3_media.bucket_arn
+
+  parameter_arns = [
+    module.ssm_parameters.database_url_parameter_arn,
+    module.ssm_parameters.encryption_key_parameter_arn
+  ]
+
+  common_tags = local.common_tags
+
+}
+
+module "rds_postgresql" {
+  source = "../../modules/rds-postgresql"
+
+  name_prefix = local.name_prefix
+
+  db_subnet_ids         = module.networking.private_db_subnet_ids
+  rds_security_group_id = module.security.rds_security_group_id
+
+  database_name   = var.database_name
+  master_username = var.database_username
+  master_password = var.database_password
+  database_port   = var.database_port
+
+  engine_version = var.database_engine_version
+  instance_class = var.database_instance_class
+
+  multi_az = var.database_multi_az
+
+  allocated_storage     = 20
+  max_allocated_storage = 50
+
+  backup_retention_days = 7
+  deletion_protection   = false
+  skip_final_snapshot   = true
+  apply_immediately     = true
+
+  common_tags = local.common_tags
+}
+
+module "ecr" {
+  source = "../../modules/ecr"
+
+  name_prefix = local.name_prefix
+  common_tags = local.common_tags
+}
+
+module "ssm_parameters" {
+  source = "../../modules/ssm-parameters"
+
+  parameter_api_prefix = "${local.parameter_prefix}/backend"
+
+  parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
+
+  database_url     = local.database_url
+  encryption_key   = var.encryption_key
+
+  ecr_repository_url = module.ecr.repository_url
+  api_url            = var.api_domain_name
+
+  app_url                  = var.frontend_domain_name
+  s3_frontend_bucket       = module.s3_frontend.bucket_name
+  frontend_tinymce_api_key = var.frontend_tinymce_api_key
+
+
+  common_tags = local.common_tags
+}
+
+# retrieve current AWS IAM account identity
+data "aws_caller_identity" "current" {}
+
+// Parameter Prefix with fixed name for Jenkin
+resource "aws_ssm_parameter" "environment_parameter_prefix" {
+  name  = "/aipost-bootstrap/eks"
+  type  = "String"
+  value = local.parameter_prefix
+
+  description = "SSM parameter namespace used by Jenkins to discover the EKS environment."
+}
+
+resource "aws_vpc_security_group_ingress_rule" "db_from_eks" {
+  security_group_id = module.security.rds_security_group_id
+
+  referenced_security_group_id = module.eks.cluster_security_group_id
+
+  ip_protocol = "tcp"
+  from_port   = var.database_port
+  to_port     = var.database_port
+
+  description = "Allow EKS backend workloads to access PostgreSQL"
 }

@@ -56,6 +56,17 @@ variable "master_password" {
   }
 }
 
+variable "database_port" {
+  description = "TCP port used by PostgreSQL."
+  type        = number
+  default     = 5432
+
+  validation {
+    condition     = var.database_port >= 1 && var.database_port <= 65535
+    error_message = "database_port must be between 1 and 65535."
+  }
+}
+
 variable "engine_version" {
   description = "PostgreSQL engine version. Confirm regional availability before changing."
   type        = string

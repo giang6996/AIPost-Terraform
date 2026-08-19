@@ -63,3 +63,89 @@ variable "eks_node_max_size" {
   description = "Maximum worker node count."
   type        = number
 }
+
+variable "secrets_store_provider_version" {
+  description = "EKS add-on version for the AWS Secrets Store CSI provider."
+  type        = string
+}
+
+variable "namespace" {
+    type    = string
+    default = "aipost"
+}
+
+variable "service_account" {
+    type    = string
+    default = "aipost-backend"
+}
+
+variable "backend_port" {
+  description = "Port exposed by the AIPost Node.js backend."
+  type        = number
+  default     = 3000
+}
+
+
+variable "database_port" {
+  description = "Port used by PostgreSQL."
+  type        = number
+  default     = 5432
+}
+
+variable "database_name" {
+  description = "Initial PostgreSQL database name."
+  type        = string
+  default     = "aipost"
+}
+
+variable "database_username" {
+  description = "PostgreSQL administrative username."
+  type        = string
+  default     = "aipost_admin"
+}
+
+variable "database_password" {
+  description = "PostgreSQL administrative password."
+  type        = string
+  sensitive   = true
+}
+
+variable "database_engine_version" {
+  description = "PostgreSQL engine version."
+  type        = string
+}
+
+variable "database_instance_class" {
+  description = "RDS instance class."
+  type        = string
+  default     = "db.t4g.micro"
+}
+
+variable "database_multi_az" {
+  description = "Whether the RDS instance uses a Multi-AZ standby."
+  type        = bool
+  default     = false
+}
+
+variable "encryption_key" {
+  description = "AIPost application encryption key."
+  type        = string
+  sensitive   = true
+}
+
+variable "frontend_domain_name" {
+  description = "Frontend application domain."
+  type        = string
+  default     = "app.jeblearning.pro.vn"
+}
+
+variable "api_domain_name" {
+  description = "Backend API domain."
+  type        = string
+  default     = "api.jeblearning.pro.vn"
+}
+
+variable "frontend_tinymce_api_key" {
+  description = "Front-end S3 bucket name used by AIPost Static Vue Application."
+  type        = string
+}

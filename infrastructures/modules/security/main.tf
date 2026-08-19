@@ -105,24 +105,22 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_backend" {
   referenced_security_group_id = aws_security_group.backend.id
 }
 
+resource "aws_vpc_security_group_ingress_rule" "rds_from_jenkins" {
+  security_group_id = aws_security_group.rds.id
+  
+  description       = "Allow Jenkins CI/CD migration runner to access PostgreSQL"
+  ip_protocol       = "tcp"
+  from_port         = var.database_port
+  to_port           = var.database_port
+  referenced_security_group_id = aws_security_group.jenkins.id
+}
+
 resource "aws_vpc_security_group_egress_rule" "rds_all_outbound" {
   security_group_id = aws_security_group.rds.id
 
   description = "Allow database response and AWS-managed outbound traffic"
   ip_protocol = "-1"
   cidr_ipv4   = "0.0.0.0/0"
-}
-
-resource "aws_vpc_security_group_ingress_rule" "rds_from_jenkins" {
-  security_group_id = aws_security_group.rds.id
-
-  referenced_security_group_id = aws_security_group.jenkins.id
-
-  ip_protocol = "tcp"
-  from_port   = 5432
-  to_port     = 5432
-
-  description = "Allow Jenkins CI/CD migration runner to access PostgreSQL"
 }
 
 
@@ -165,6 +163,6 @@ resource "aws_vpc_security_group_egress_rule" "jenkins_postgres" {
   referenced_security_group_id = aws_security_group.rds.id
 
   ip_protocol = "tcp"
-  from_port   = 5432
-  to_port     = 5432
+  from_port   = var.database_port
+  to_port     = var.database_port
 }

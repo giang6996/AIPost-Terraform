@@ -30,6 +30,10 @@ resource "aws_ssm_parameter" "encryption_key" {
 }
 
 resource "aws_ssm_parameter" "backend_asg_name" {
+
+  // Optional for EKS
+  count = var.backend_asg_name != null ? 1 : 0
+
   name        = "${var.parameter_api_prefix}/BACKEND_ASG_NAME"
   description = "AIPost backend auto scaling group"
   type        = "String"
@@ -72,6 +76,10 @@ resource "aws_ssm_parameter" "api_url" {
 }
 
 resource "aws_ssm_parameter" "backend_image_tag" {
+
+  // Optional for EKS
+  count = var.initial_backend_image_tag != null ? 1 : 0
+
   name        = "${var.parameter_api_prefix}/IMAGE_TAG"
   description = "Currently deployed AIPost backend image tag."
   type        = "String"
