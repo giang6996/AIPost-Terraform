@@ -87,6 +87,12 @@ module "ssm_parameters" {
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
 
+  parameter_network_prefix = "${local.parameter_prefix}/network"
+
+  vpc_id = module.networking.vpc_id
+
+  jenkins_subnet_id = module.networking.private_app_subnet_ids[0]
+
   database_url     = local.database_url
   encryption_key   = var.encryption_key
   backend_asg_name = module.ec2_asg.autoscaling_group_name
