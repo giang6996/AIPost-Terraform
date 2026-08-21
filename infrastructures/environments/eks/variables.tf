@@ -133,6 +133,12 @@ variable "encryption_key" {
   sensitive   = true
 }
 
+variable "root_domain_name" {
+  description = "Root Route 53 domain."
+  type        = string
+  default     = "jeblearning.pro.vn"
+}
+
 variable "frontend_domain_name" {
   description = "Frontend application domain."
   type        = string
@@ -148,4 +154,20 @@ variable "api_domain_name" {
 variable "frontend_tinymce_api_key" {
   description = "Front-end S3 bucket name used by AIPost Static Vue Application."
   type        = string
+}
+
+variable "api_ingress_namespace" {
+  type    = string
+  default = "aipost"
+}
+
+variable "api_ingress_name" {
+  type    = string
+  default = "aipost-backend"
+}
+
+variable "enable_cloudfront" {
+  description = "Whether to deploy the CloudFront frontend distribution and related integration resources."
+  type        = bool
+  default     = false
 }

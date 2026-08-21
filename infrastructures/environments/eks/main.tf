@@ -100,6 +100,15 @@ module "eks-workload-iam" {
 
 }
 
+module "eks_lb_controller_iam" {
+  source = "../../modules/eks-lb-controller-iam"
+
+  name_prefix = local.name_prefix
+  cluster_name = module.eks.cluster_name
+
+  common_tags = local.common_tags
+}
+
 module "rds_postgresql" {
   source = "../../modules/rds-postgresql"
 
@@ -157,8 +166,118 @@ module "ssm_parameters" {
   common_tags = local.common_tags
 }
 
+module "cloudfront" {
+  source = "../../modules/cloudfront"
+
+  name_prefix = local.name_prefix
+
+  enable_distribution = var.enable_cloudfront
+
+  frontend_bucket_id = module.s3_frontend.bucket_id
+
+  frontend_bucket_arn = module.s3_frontend.bucket_arn
+
+  frontend_bucket_regional_domain_name = module.s3_frontend.regional_domain_name
+
+  frontend_domain_name = var.frontend_domain_name
+
+  frontend_certificate_arn = module.dns_acm.frontend_certificate_arn
+
+  common_tags = local.common_tags
+}
+
+module "dns_acm" {
+  source = "../../modules/dns-acm"
+
+  providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  hosted_zone_id = data.aws_route53_zone.main.zone_id
+
+  frontend_domain_name = var.frontend_domain_name
+  api_domain_name      = var.api_domain_name
+
+  common_tags = local.common_tags
+}
+
+data "aws_route53_zone" "main" {
+  name         = var.root_domain_name
+  private_zone = false
+}
+
+# Create subdomain record at root before creating TLS
+resource "aws_route53_record" "frontend" {
+  # Debug
+  count = var.enable_cloudfront ? 1 : 0
+
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.frontend_domain_name
+  type    = "A"
+
+  alias {
+    name                   = module.cloudfront.distribution_domain_name
+    zone_id                = module.cloudfront.distribution_hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "frontend_ipv6" {
+  # Debug
+  count = var.enable_cloudfront ? 1 : 0
+
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.frontend_domain_name
+  type    = "AAAA"
+
+  alias {
+    name                   = module.cloudfront.distribution_domain_name
+    zone_id                = module.cloudfront.distribution_hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "api" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.api_domain_name
+  type    = "A"
+
+  alias {
+    name                   = data.aws_lb.eks_api.dns_name
+    zone_id                = data.aws_lb.eks_api.zone_id
+    evaluate_target_health = true
+  }
+}
+
 # retrieve current AWS IAM account identity
 data "aws_caller_identity" "current" {}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+data "aws_lb" "eks_api" {
+  tags = {
+    "ingress.k8s.aws/stack" = local.api_ingress_stack
+  }
+}
 
 // Parameter Prefix with fixed name for Jenkin
 resource "aws_ssm_parameter" "environment_parameter_prefix" {
@@ -180,3 +299,4 @@ resource "aws_vpc_security_group_ingress_rule" "db_from_eks" {
 
   description = "Allow EKS backend workloads to access PostgreSQL"
 }
+

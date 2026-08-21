@@ -25,3 +25,7 @@ output "eks_cluster_security_group_id" {
   description = "Security group created for the EKS cluster."
   value       = module.eks.cluster_security_group_id
 }
+
+output "ecr_repository_url" {
+  value = module.ecr.repository_url
+}

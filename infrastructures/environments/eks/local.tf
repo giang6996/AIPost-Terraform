@@ -9,6 +9,8 @@ locals {
   frontend_bucket_name = "${local.name_prefix}-frontend-${data.aws_caller_identity.current.account_id}"
   media_bucket_name    = "${local.name_prefix}-media-${data.aws_caller_identity.current.account_id}"
 
+  api_ingress_stack = "${var.api_ingress_namespace}/${var.api_ingress_name}"
+
   common_tags = {
     Project     = local.project
     Environment = local.environment

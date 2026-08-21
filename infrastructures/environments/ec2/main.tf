@@ -225,44 +225,6 @@ module "cloudfront" {
 }
 
 
-module "jenkins_iam" {
-  source = "../../modules/jenkins-iam"
-
-  name_prefix = local.name_prefix
-
-  ecr_repository_arn = module.ecr.repository_arn
-
-  backend_asg_arn = module.ec2_asg.autoscaling_arn
-
-  frontend_bucket_arn = module.s3_frontend.bucket_arn
-
-  database_url_parameter_arn = module.ssm_parameters.database_url_parameter_arn
-
-  backend_image_tag_parameter_arn = module.ssm_parameters.backend_image_tag_parameter_arn
-
-  common_tags = local.common_tags
-}
-
-module "jenkins_ec2" {
-  source = "../../modules/jenkins-ec2"
-
-  name_prefix = local.name_prefix
-
-  ami_id        = data.aws_ami.amazon_linux.id
-  instance_type = var.jenkins_instance_type
-
-  subnet_id = module.networking.private_app_subnet_ids[0]
-
-  security_group_ids = [
-    module.security.jenkins_security_group_id
-  ]
-
-  instance_profile_name = module.jenkins_iam.instance_profile_name
-
-  common_tags = local.common_tags
-}
-
-
 # Create subdomain record at root before creating TLS
 resource "aws_route53_record" "frontend" {
   # Debug

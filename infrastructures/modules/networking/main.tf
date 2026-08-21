@@ -27,6 +27,7 @@ resource "aws_subnet" "public" {
     {
       Name = "${var.name_prefix}-public-${count.index + 1}"
       Tier = "public"
+      "kubernetes.io/role/elb" = "1"
       AZ   = var.availability_zones[count.index]
     }
   )
@@ -46,6 +47,7 @@ resource "aws_subnet" "private_app" {
     {
       Name = "${var.name_prefix}-private-app-${count.index + 1}"
       Tier = "private-application"
+      "kubernetes.io/role/internal-elb" = "1"
       AZ   = var.availability_zones[count.index]
     }
   )
