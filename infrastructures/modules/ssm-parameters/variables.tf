@@ -18,6 +18,16 @@ variable "parameter_frontend_prefix" {
   }
 }
 
+variable "parameter_network_prefix" {
+  description = "Hierarchical Parameter Store network-related path used by the shared network module."
+  type        = string
+
+  validation {
+    condition     = startswith(var.parameter_network_prefix, "/")
+    error_message = "parameter_prefix must begin with '/'."
+  }
+}
+
 variable "initial_backend_image_tag" {
   description = "Initial backend Docker image tag before CI/CD takes ownership."
   type        = string
@@ -28,6 +38,12 @@ variable "database_url" {
   description = "PostgreSQL connection string consumed by the backend."
   type        = string
   sensitive   = true
+}
+
+variable "database_port" {
+  description = "PostgreSQL connection port."
+  type        = string
+  default     = "5432"
 }
 
 variable "encryption_key" {
@@ -72,6 +88,14 @@ variable "frontend_tinymce_api_key" {
   description = "TinyMCE API key injected into the AIPost frontend during the Vite build."
   type        = string
   sensitive   = true
+}
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "jenkins_subnet_id" {
+  type = string
 }
 
 variable "kms_key_id" {

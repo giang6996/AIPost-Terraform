@@ -8,6 +8,16 @@ output "database_url_parameter_arn" {
   value       = aws_ssm_parameter.database_url.arn
 }
 
+output "database_port_parameter_name" {
+  description = "Name of the DATABASE_PORT parameter."
+  value       = aws_ssm_parameter.database_port.name
+}
+
+output "database_port_parameter_arn" {
+  description = "ARN of the DATABASE_PORT parameter."
+  value       = aws_ssm_parameter.database_port.arn
+}
+
 output "encryption_key_parameter_name" {
   description = "Name of the ENCRYPTION_KEY parameter."
   value       = aws_ssm_parameter.encryption_key.name

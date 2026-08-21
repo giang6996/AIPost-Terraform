@@ -142,3 +142,29 @@ resource "aws_ssm_parameter" "frontend_tinymce_api_key" {
     }
   )
 }
+
+resource "aws_ssm_parameter" "database_port" {
+  name        = "${var.parameter_network_prefix}/DATABASE_PORT"
+  description = "AIPost PostgreSQL connection port"
+  type        = "String"
+  value       = var.database_port
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "database_port"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "vpc_id" {
+  name  = "${var.parameter_network_prefix}/VPC_ID"
+  type  = "String"
+  value = var.vpc_id
+}
+
+resource "aws_ssm_parameter" "jenkins_subnet_id" {
+  name  = "${var.parameter_network_prefix}/JENKINS_SUBNET_ID"
+  type  = "String"
+  value = var.jenkins_subnet_id
+}
