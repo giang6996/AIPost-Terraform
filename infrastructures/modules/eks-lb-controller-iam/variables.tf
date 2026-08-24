@@ -1,14 +1,14 @@
 variable "name_prefix" {
-    description = "Common resource naming prefix."
-    type        = string
+  description = "Common resource naming prefix."
+  type        = string
 }
 
 variable "cluster_name" {
-    description = "EKS cluster name"
-    type        = string
+  description = "EKS cluster name"
+  type        = string
 }
 
 variable "common_tags" {
-    type    = map(string)
-    default = {}
+  type    = map(string)
+  default = {}
 }

@@ -25,10 +25,10 @@ resource "aws_subnet" "public" {
   tags = merge(
     var.common_tags,
     {
-      Name = "${var.name_prefix}-public-${count.index + 1}"
-      Tier = "public"
+      Name                     = "${var.name_prefix}-public-${count.index + 1}"
+      Tier                     = "public"
       "kubernetes.io/role/elb" = "1"
-      AZ   = var.availability_zones[count.index]
+      AZ                       = var.availability_zones[count.index]
     }
   )
 }
@@ -45,10 +45,10 @@ resource "aws_subnet" "private_app" {
   tags = merge(
     var.common_tags,
     {
-      Name = "${var.name_prefix}-private-app-${count.index + 1}"
-      Tier = "private-application"
+      Name                              = "${var.name_prefix}-private-app-${count.index + 1}"
+      Tier                              = "private-application"
       "kubernetes.io/role/internal-elb" = "1"
-      AZ   = var.availability_zones[count.index]
+      AZ                                = var.availability_zones[count.index]
     }
   )
 }

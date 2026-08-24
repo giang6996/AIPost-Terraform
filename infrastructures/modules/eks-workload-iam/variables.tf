@@ -1,24 +1,24 @@
 variable "name_prefix" {
-    description = "Common resource naming prefix."
-    type        = string
+  description = "Common resource naming prefix."
+  type        = string
 }
 
 variable "cluster_name" {
-    description = "EKS cluster name"
-    type        = string
+  description = "EKS cluster name"
+  type        = string
 }
 
 variable "namespace" {
-    type    = string
+  type = string
 }
 
 variable "service_account" {
-    type    = string
+  type = string
 }
 
-variable "media_bucket_arn"{
-    description = "Public base URL used for media."
-    type        = string
+variable "media_bucket_arn" {
+  description = "Public base URL used for media."
+  type        = string
 }
 
 variable "parameter_arns" {
@@ -32,6 +32,6 @@ variable "parameter_arns" {
 }
 
 variable "common_tags" {
-    type    = map(string)
-    default = {}
+  type    = map(string)
+  default = {}
 }
