@@ -3,11 +3,16 @@ output "target_environment" {
 }
 
 output "target_vpc_id" {
-  value = data.aws_ssm_parameter.vpc_id.value
+  value = nonsensitive(data.aws_ssm_parameter.vpc_id.value)
+}
+
+output "jenkins_security_group_id" {
+  description = " Security group ID for Jenkins EC2 Instance."
+  value       = aws_security_group.jenkins.id
 }
 
 output "jenkins_subnet_id" {
-  value = data.aws_ssm_parameter.jenkins_subnet_id.value
+  value = nonsensitive(data.aws_ssm_parameter.jenkins_subnet_id.value)
 }
 
 output "jenkins_instance_id" {

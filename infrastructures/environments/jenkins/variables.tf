@@ -41,6 +41,8 @@ variable "jenkins_instance_type" {
   default     = "t3.small"
 }
 
+
+
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."
   type        = map(string)
