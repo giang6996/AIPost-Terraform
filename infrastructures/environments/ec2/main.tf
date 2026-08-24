@@ -83,19 +83,19 @@ module "rds_postgresql" {
 module "ssm_parameters" {
   source = "../../modules/ssm-parameters"
 
+  enable_eks_metadata = false
+
   parameter_api_prefix = "${local.parameter_prefix}/backend"
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
 
   parameter_network_prefix = "${local.parameter_prefix}/network"
 
-  vpc_id = module.networking.vpc_id
+  parameter_infrastructure_prefix = "${local.parameter_prefix}/infrastrcture"
 
-  jenkins_subnet_id = module.networking.private_app_subnet_ids[0]
-
-  database_url     = local.database_url
-  encryption_key   = var.encryption_key
-  backend_asg_name = module.ec2_asg.autoscaling_group_name
+  database_url              = local.database_url
+  encryption_key            = var.encryption_key
+  backend_asg_name          = module.ec2_asg.autoscaling_group_name
   initial_backend_image_tag = "demo"
 
   ecr_repository_url = module.ecr.repository_url
@@ -105,7 +105,14 @@ module "ssm_parameters" {
   s3_frontend_bucket       = module.s3_frontend.bucket_name
   frontend_tinymce_api_key = var.frontend_tinymce_api_key
 
-
+  vpc_id = module.networking.vpc_id
+  jenkins_subnet_id = module.networking.private_app_subnet_ids[0]
+  database_port = module.rds_postgresql.db_port
+  rds_security_group_id = module.security.rds_security_group_id
+  ecr_repository_arn = module.ecr.repository_arn
+  frontend_bucket_arn = module.s3_frontend.bucket_arn
+  backend_asg_arn = module.ec2_asg.autoscaling_arn
+  
   common_tags = local.common_tags
 }
 
@@ -276,7 +283,7 @@ resource "aws_route53_record" "api" {
 
 // Parameter Prefix with fixed name for Jenkin
 resource "aws_ssm_parameter" "environment_parameter_prefix" {
-  name  = "/aipost-bootstrap/ec2"
+  name  = "/aipost-bootstrap/active"
   type  = "String"
   value = local.parameter_prefix
 
