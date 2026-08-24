@@ -53,3 +53,23 @@ output "backend_image_tag_parameter_arn" {
   value       = aws_ssm_parameter.backend_image_tag[*].arn
 }
 
+output "jenkins_subnet_id_parameter_name" {
+  description = "Name of the Jenkin provisioned subnet SSM parameter."
+  value       = aws_ssm_parameter.jenkins_subnet_id.name
+}
+
+output "jenkins_subnet_id_parameter_arn" {
+  description = "ARN of the Jenkin provisioned subnet SSM parameter."
+  value       = aws_ssm_parameter.jenkins_subnet_id.arn
+}
+
+output "rds_security_group_id_parameter_name" {
+  description = "Name of the Jenkin provisioned subnet SSM parameter."
+  value       = aws_ssm_parameter.rds_security_group_id.name
+}
+
+output "rds_security_group_id_parameter_arn" {
+  description = "ARN of the Jenkin provisioned subnet SSM parameter."
+  value       = aws_ssm_parameter.rds_security_group_id.arn
+}
+

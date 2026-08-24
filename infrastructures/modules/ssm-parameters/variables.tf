@@ -28,6 +28,16 @@ variable "parameter_network_prefix" {
   }
 }
 
+variable "parameter_infrastructure_prefix" {
+  description = "Hierarchical Parameter Store infrastructure-related path."
+  type        = string
+
+  validation {
+    condition     = startswith(var.parameter_infrastructure_prefix, "/")
+    error_message = "parameter_prefix must begin with '/'."
+  }
+}
+
 variable "initial_backend_image_tag" {
   description = "Initial backend Docker image tag before CI/CD takes ownership."
   type        = string
@@ -42,8 +52,8 @@ variable "database_url" {
 
 variable "database_port" {
   description = "PostgreSQL connection port."
-  type        = string
-  default     = "5432"
+  type        = number
+  default     = 5432
 }
 
 variable "encryption_key" {
@@ -97,6 +107,45 @@ variable "vpc_id" {
 variable "jenkins_subnet_id" {
   type = string
 }
+
+variable "rds_security_group_id" {
+  description = "RDS Security Group ID"
+  type = string
+}
+
+variable "ecr_repository_arn"{
+  type = string
+}
+
+variable "frontend_bucket_arn"{
+  type = string
+}
+
+variable "backend_asg_arn"{
+  type = string
+  default = null
+}
+
+variable "enable_eks_metadata" {
+  type    = bool
+  default = false
+}
+
+variable "eks_cluster_arn"{
+  type = string
+  default = null
+}
+
+variable "eks_cluster_name"{
+  type = string
+  default = null
+}
+
+variable "eks_cluster_sg_id"{
+  type = string
+  default = null
+}
+
 
 variable "kms_key_id" {
   description = "Optional KMS key ID or ARN for SecureString encryption. Null uses the AWS-managed SSM key."

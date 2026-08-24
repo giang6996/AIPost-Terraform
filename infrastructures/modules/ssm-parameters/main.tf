@@ -147,7 +147,7 @@ resource "aws_ssm_parameter" "database_port" {
   name        = "${var.parameter_network_prefix}/DATABASE_PORT"
   description = "AIPost PostgreSQL connection port"
   type        = "String"
-  value       = var.database_port
+  value       = tostring(var.database_port)
 
   tags = merge(
     var.common_tags,
@@ -157,14 +157,156 @@ resource "aws_ssm_parameter" "database_port" {
   )
 }
 
+
 resource "aws_ssm_parameter" "vpc_id" {
   name  = "${var.parameter_network_prefix}/VPC_ID"
   type  = "String"
   value = var.vpc_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "vpc_id"
+    }
+  )
 }
 
 resource "aws_ssm_parameter" "jenkins_subnet_id" {
   name  = "${var.parameter_network_prefix}/JENKINS_SUBNET_ID"
   type  = "String"
   value = var.jenkins_subnet_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "jenkins_subnet_id"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "rds_security_group_id" {
+  name  = "${var.parameter_network_prefix}/RDS_SECURITY_GROUP_ID"
+  type  = "String"
+  value = var.rds_security_group_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "rds_security_group_id"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "ecr_repository_arn" {
+  name  = "${var.parameter_infrastructure_prefix}/ECR_REPOSITORY_ARN"
+  type  = "String"
+  value = var.ecr_repository_arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "ecr_repository_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "frontend_bucket_arn" {
+  name  = "${var.parameter_infrastructure_prefix}/FRONTEND_BUCKET_ARN"
+  type  = "String"
+  value = var.frontend_bucket_arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "frontend_bucket_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "database_url_parameter_arn" {
+  name  = "${var.parameter_infrastructure_prefix}/DATABASE_URL_PARAMETER_ARN"
+  type  = "String"
+  value = aws_ssm_parameter.database_url.arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "database_url_parameter_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "backend_asg_arn" {
+  count = var.backend_asg_arn != null ? 1 : 0
+  
+  name  = "${var.parameter_infrastructure_prefix}/BACKEND_ASG_ARN"
+  type  = "String"
+  value = var.backend_asg_arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "backend_asg_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "backend_image_tag_parameter_arn" {
+  count = var.initial_backend_image_tag != null ? 1 : 0
+  
+  name  = "${var.parameter_infrastructure_prefix}/BACKEND_IMAGE_TAG_PARAMETER_ARN"
+  type  = "String"
+  value = aws_ssm_parameter.backend_image_tag[0].arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "backend_image_tag_parameter_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "eks_cluster_arn" {
+  count = var.enable_eks_metadata ? 1 : 0
+
+  name  = "${var.parameter_infrastructure_prefix}/EKS_CLUSTER_ARN"
+  type  = "String"
+  value = var.eks_cluster_arn
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "eks_cluster_arn"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "eks_cluster_name" {
+  count = var.enable_eks_metadata ? 1 : 0
+
+  name  = "${var.parameter_infrastructure_prefix}/EKS_CLUSTER_NAME"
+  type  = "String"
+  value = var.eks_cluster_name
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "eks_cluster_name"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "eks_cluster_sg_id" {
+  count = var.enable_eks_metadata ? 1 : 0
+
+  name  = "${var.parameter_infrastructure_prefix}/EKS_CLUSTER_SG_ID"
+  type  = "String"
+  value = var.eks_cluster_sg_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "eks_cluster_sg_id"
+    }
+  )
 }
