@@ -88,7 +88,7 @@ module "eks-workload-iam" {
   namespace = var.namespace
 
   service_account = var.service_account
-  
+
   media_bucket_arn = module.s3_media.bucket_arn
 
   parameter_arns = [
@@ -103,7 +103,7 @@ module "eks-workload-iam" {
 module "eks_lb_controller_iam" {
   source = "../../modules/eks-lb-controller-iam"
 
-  name_prefix = local.name_prefix
+  name_prefix  = local.name_prefix
   cluster_name = module.eks.cluster_name
 
   common_tags = local.common_tags
@@ -148,12 +148,19 @@ module "ecr" {
 module "ssm_parameters" {
   source = "../../modules/ssm-parameters"
 
+  enable_eks_metadata = true
+
   parameter_api_prefix = "${local.parameter_prefix}/backend"
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
 
-  database_url     = local.database_url
-  encryption_key   = var.encryption_key
+
+  parameter_network_prefix = "${local.parameter_prefix}/network"
+
+  parameter_infrastructure_prefix = "${local.parameter_prefix}/infrastructure"
+
+  database_url   = local.database_url
+  encryption_key = var.encryption_key
 
   ecr_repository_url = module.ecr.repository_url
   api_url            = var.api_domain_name
@@ -162,6 +169,15 @@ module "ssm_parameters" {
   s3_frontend_bucket       = module.s3_frontend.bucket_name
   frontend_tinymce_api_key = var.frontend_tinymce_api_key
 
+  vpc_id                = module.networking.vpc_id
+  jenkins_subnet_id     = module.networking.private_app_subnet_ids[0]
+  database_port         = module.rds_postgresql.db_port
+  rds_security_group_id = module.security.rds_security_group_id
+  ecr_repository_arn    = module.ecr.repository_arn
+  frontend_bucket_arn   = module.s3_frontend.bucket_arn
+  eks_cluster_arn       = module.eks.cluster_arn
+  eks_cluster_name      = module.eks.cluster_name
+  eks_cluster_sg_id     = module.eks.cluster_security_group_id
 
   common_tags = local.common_tags
 }
@@ -202,6 +218,10 @@ module "dns_acm" {
   common_tags = local.common_tags
 }
 
+data "aws_ssm_parameter" "jenkins_role_arn" {
+  name = "${local.parameter_prefix}/jenkins/ROLE_ARN"
+}
+
 data "aws_route53_zone" "main" {
   name         = var.root_domain_name
   private_zone = false
@@ -239,13 +259,16 @@ resource "aws_route53_record" "frontend_ipv6" {
 }
 
 resource "aws_route53_record" "api" {
+
+  count = var.enable_api_alias ? 1 : 0
+
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.api_domain_name
   type    = "A"
 
   alias {
-    name                   = data.aws_lb.eks_api.dns_name
-    zone_id                = data.aws_lb.eks_api.zone_id
+    name                   = data.aws_lb.eks_api[0].dns_name
+    zone_id                = data.aws_lb.eks_api[0].zone_id
     evaluate_target_health = true
   }
 }
@@ -274,6 +297,8 @@ data "aws_ami" "amazon_linux" {
 }
 
 data "aws_lb" "eks_api" {
+  count = var.enable_api_alias ? 1 : 0
+
   tags = {
     "ingress.k8s.aws/stack" = local.api_ingress_stack
   }
@@ -281,7 +306,7 @@ data "aws_lb" "eks_api" {
 
 // Parameter Prefix with fixed name for Jenkin
 resource "aws_ssm_parameter" "environment_parameter_prefix" {
-  name  = "/aipost-bootstrap/eks"
+  name  = "/aipost-bootstrap/active"
   type  = "String"
   value = local.parameter_prefix
 
@@ -298,5 +323,44 @@ resource "aws_vpc_security_group_ingress_rule" "db_from_eks" {
   to_port     = var.database_port
 
   description = "Allow EKS backend workloads to access PostgreSQL"
+}
+
+resource "aws_eks_access_entry" "jenkins" {
+  cluster_name = module.eks.cluster_name
+
+  principal_arn = nonsensitive(
+    data.aws_ssm_parameter.jenkins_role_arn.value
+  )
+
+  type = "STANDARD"
+
+  tags = merge(
+    local.common_tags,
+    {
+      Purpose = "jenkins-cicd"
+    }
+  )
+}
+
+resource "aws_eks_access_policy_association" "jenkins" {
+  cluster_name = module.eks.cluster_name
+
+  principal_arn = nonsensitive(
+    data.aws_ssm_parameter.jenkins_role_arn.value
+  )
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+
+  access_scope {
+    type = "namespace"
+
+    namespaces = [
+      "aipost"
+    ]
+  }
+
+  depends_on = [
+    aws_eks_access_entry.jenkins
+  ]
 }
 

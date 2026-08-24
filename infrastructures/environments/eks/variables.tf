@@ -70,13 +70,13 @@ variable "secrets_store_provider_version" {
 }
 
 variable "namespace" {
-    type    = string
-    default = "aipost"
+  type    = string
+  default = "aipost"
 }
 
 variable "service_account" {
-    type    = string
-    default = "aipost-backend"
+  type    = string
+  default = "aipost-backend"
 }
 
 variable "backend_port" {
@@ -166,8 +166,15 @@ variable "api_ingress_name" {
   default = "aipost-backend"
 }
 
+
+
 variable "enable_cloudfront" {
   description = "Whether to deploy the CloudFront frontend distribution and related integration resources."
   type        = bool
   default     = false
+}
+
+variable "enable_api_alias" {
+  type    = bool
+  default = false
 }
