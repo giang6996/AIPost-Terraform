@@ -14,6 +14,8 @@ data "aws_iam_policy_document" "jenkins_assume_role" {
 }
 
 data "aws_iam_policy_document" "jenkins_deploy" {
+
+  # Shared policy (EC2 + EKS)
   statement {
     sid    = "ECRAuthentication"
     effect = "Allow"
@@ -73,44 +75,6 @@ data "aws_iam_policy_document" "jenkins_deploy" {
   }
 
   statement {
-    sid    = "UpdateBackendReleaseTag"
-    effect = "Allow"
-
-    actions = [
-      "ssm:PutParameter"
-    ]
-
-    resources = [
-      var.backend_image_tag_parameter_arn
-    ]
-  }
-
-  statement {
-    sid    = "StartBackendInstanceRefresh"
-    effect = "Allow"
-
-    actions = [
-      "autoscaling:StartInstanceRefresh"
-    ]
-
-    resources = [
-      var.backend_asg_arn
-    ]
-  }
-
-  statement {
-    sid    = "DescribeBackendDeployment"
-    effect = "Allow"
-
-    actions = [
-      "autoscaling:DescribeInstanceRefreshes",
-      "autoscaling:DescribeAutoScalingGroups"
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
     sid    = "ReadProductionDatabaseUrl"
     effect = "Allow"
 
@@ -121,6 +85,75 @@ data "aws_iam_policy_document" "jenkins_deploy" {
     resources = [
       var.database_url_parameter_arn
     ]
+  }
+
+  # EC2 Environment only
+  dynamic "statement" {
+    for_each = var.initial_backend_image_tag_parameter_arn != null ? [1] : []
+
+    content {
+      sid    = "UpdateBackendReleaseTag"
+      effect = "Allow"
+
+      actions = [
+        "ssm:PutParameter"
+      ]
+
+      resources = [
+        var.initial_backend_image_tag_parameter_arn
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.backend_asg_arn != null ? [1] : []
+
+    content {
+      sid    = "StartBackendInstanceRefresh"
+      effect = "Allow"
+
+      actions = [
+        "autoscaling:StartInstanceRefresh"
+      ]
+
+      resources = [
+        var.backend_asg_arn
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.backend_asg_arn != null ? [1] : []
+
+    content {
+      sid    = "DescribeBackendDeployment"
+      effect = "Allow"
+
+      actions = [
+        "autoscaling:DescribeInstanceRefreshes",
+        "autoscaling:DescribeAutoScalingGroups"
+      ]
+
+      resources = ["*"]
+    }
+  }
+
+  # EKS Environment only
+  dynamic "statement" {
+    for_each = var.eks_cluster_arn != null ? [1] : []
+
+    content {
+      sid    = "DescribeEksCluster"
+      effect = "Allow"
+
+      actions = [
+        "eks:DescribeCluster"
+      ]
+
+      resources = [
+        var.eks_cluster_arn
+      ]
+    }
   }
 
 }
