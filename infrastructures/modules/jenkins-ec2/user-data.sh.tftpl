@@ -14,26 +14,34 @@ dnf install -y \
   nodejs22 \
   nodejs22-npm
 
-# 3. Configure the Jenkins LTS repository
+# 3. Download and install the latest stable kubectl binary
+KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+curl -LO "https://dl.k8s.io/release/$${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+
+# Validate and install to /usr/local/bin
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+
+# 4. Configure the Jenkins LTS repository
 wget -O /etc/yum.repos.d/jenkins.repo \
   https://pkg.jenkins.io/rpm-stable/jenkins.repo
 
 rpm --import \
   https://pkg.jenkins.io/rpm-stable/jenkins.io-2026.key
 
-# 4. Install Jenkins
+# 5. Install Jenkins
 dnf install -y jenkins
 
-# 5. Enable and start Docker
+# 6. Enable and start Docker
 systemctl enable docker
 systemctl start docker
 
-# 6. Let Jenkins use Docker
+# 7. Let Jenkins use Docker
 usermod -aG docker jenkins
 
-# 7. Enable and start Jenkins
+# 8. Enable and start Jenkins
 systemctl enable jenkins
 systemctl start jenkins
 
-# 8. Restart Jenkins so group membership is applied
+# 9. Restart Jenkins so group membership is applied
 systemctl restart jenkins
