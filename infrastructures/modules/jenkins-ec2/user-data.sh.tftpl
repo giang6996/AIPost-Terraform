@@ -32,16 +32,19 @@ rpm --import \
 # 5. Install Jenkins
 dnf install -y jenkins
 
-# 6. Enable and start Docker
+# 6. Install netlify cli
+npm install -g netlify-cli@latest
+
+# 7. Enable and start Docker
 systemctl enable docker
 systemctl start docker
 
-# 7. Let Jenkins use Docker
+# 8. Let Jenkins use Docker
 usermod -aG docker jenkins
 
-# 8. Enable and start Jenkins
+# 9. Enable and start Jenkins
 systemctl enable jenkins
 systemctl start jenkins
 
-# 9. Restart Jenkins so group membership is applied
+# 10. Restart Jenkins so group membership is applied
 systemctl restart jenkins
