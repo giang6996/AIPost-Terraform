@@ -236,6 +236,36 @@ resource "aws_ssm_parameter" "database_url_parameter_arn" {
   )
 }
 
+resource "aws_ssm_parameter" "netlify_auth_token" {
+  name        = "${var.parameter_infrastructure_prefix}/NETLIFY_AUTH_TOKEN"
+  description = "AIPost Netlify auth token"
+  type        = "SecureString"
+  value       = var.netlify_auth_token
+  key_id      = var.kms_key_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "netlify_auth_token"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "netlify_site_id" {
+  name        = "${var.parameter_infrastructure_prefix}/NETLIFY_SITE_ID"
+  description = "AIPost Netlify site id"
+  type        = "SecureString"
+  value       = var.netlify_site_id
+  key_id      = var.kms_key_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "netlify_site_id"
+    }
+  )
+}
+
 resource "aws_ssm_parameter" "backend_asg_arn" {
   count = var.backend_asg_arn != null ? 1 : 0
   

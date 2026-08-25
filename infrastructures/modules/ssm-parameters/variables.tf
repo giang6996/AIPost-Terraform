@@ -121,6 +121,16 @@ variable "frontend_bucket_arn"{
   type = string
 }
 
+variable "netlify_auth_token" {
+  type        = string
+  sensitive   = true
+}
+
+variable "netlify_site_id" {
+  type        = string
+  sensitive   = true
+}
+
 variable "backend_asg_arn"{
   type = string
   default = null
