@@ -33,6 +33,17 @@ variable "eks_cluster_arn" {
   nullable = true
 }
 
+variable "netlify_site_id_parameter_arn" {
+  type    = string
+  default = null
+}
+
+variable "netlify_auth_token_parameter_arn" {
+  type      = string
+  default   = null
+  sensitive = true
+}
+
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."
   type        = map(string)

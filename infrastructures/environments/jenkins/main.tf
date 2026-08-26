@@ -105,6 +105,18 @@ module "jenkins_iam" {
     : null
   )
 
+  netlify_site_id_parameter_arn = (
+    var.enable_netlify
+    ? aws_ssm_parameter.netlify_site_id[0].arn
+    : null
+  )
+
+  netlify_auth_token_parameter_arn = (
+    var.enable_netlify
+    ? aws_ssm_parameter.netlify_auth_token[0].arn
+    : null
+  )
+
   common_tags = local.common_tags
 }
 
@@ -190,6 +202,41 @@ resource "aws_vpc_security_group_ingress_rule" "jenkins_eks_api" {
   from_port   = 443
   to_port     = 443
 }
+
+resource "aws_ssm_parameter" "netlify_auth_token" {
+  count = var.enable_netlify ? 1 : 0
+
+  name        = "${local.jenkin_prefix}/NETLIFY_AUTH_TOKEN"
+  description = "AIPost Netlify auth token"
+  type        = "SecureString"
+  value       = var.netlify_auth_token
+  key_id      = var.kms_key_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "netlify_auth_token"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "netlify_site_id" {
+  count = var.enable_netlify ? 1 : 0
+
+  name        = "${local.jenkin_prefix}/NETLIFY_SITE_ID"
+  description = "AIPost Netlify site id"
+  type        = "SecureString"
+  value       = var.netlify_site_id
+  key_id      = var.kms_key_id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Purpose = "netlify_site_id"
+    }
+  )
+}
+
 
 resource "aws_ssm_parameter" "jenkins_role_arn" {
   name = "${local.jenkin_prefix}/ROLE_ARN"

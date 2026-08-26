@@ -73,23 +73,4 @@ output "rds_security_group_id_parameter_arn" {
   value       = aws_ssm_parameter.rds_security_group_id.arn
 }
 
-output "netlify_auth_token_parameter_name" {
-  description = "Name of the Netlify authentication token SSM parameter."
-  value       = aws_ssm_parameter.netlify_auth_token.name
-}
-
-output "netlify_auth_token_parameter_arn" {
-  description = "Name of the Netlify authentication token SSM parameter."
-  value       = aws_ssm_parameter.netlify_auth_token.arn
-}
-
-output "netlify_site_id_parameter_name" {
-  description = "Name of the Netlify site id SSM parameter."
-  value       = aws_ssm_parameter.netlify_site_id.name
-}
-
-output "netlify_site_id_parameter_arn" {
-  description = "Name of the Netlify site id SSM parameter."
-  value       = aws_ssm_parameter.netlify_site_id.arn
-}
 

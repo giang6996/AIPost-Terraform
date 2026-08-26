@@ -41,7 +41,26 @@ variable "jenkins_instance_type" {
   default     = "t3.small"
 }
 
+variable "kms_key_id" {
+  description = "Optional KMS key ID or ARN for SecureString encryption. Null uses the AWS-managed SSM key."
+  type        = string
+  default     = null
+}
 
+variable "enable_netlify" {
+  type    = bool
+  default = false
+}
+
+variable "netlify_auth_token" {
+  type        = string
+  sensitive   = true
+}
+
+variable "netlify_site_id" {
+  type        = string
+  sensitive   = true
+}
 
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."

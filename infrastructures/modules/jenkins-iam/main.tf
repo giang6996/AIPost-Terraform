@@ -15,6 +15,27 @@ data "aws_iam_policy_document" "jenkins_assume_role" {
 
 data "aws_iam_policy_document" "jenkins_deploy" {
 
+  // Netify deployment config parameter
+  dynamic "statement" {
+    for_each = (
+      var.netlify_site_id_parameter_arn != null &&
+      var.netlify_auth_token_parameter_arn != null
+    ) ? [1] : []
+
+    content {
+      sid = "ReadNetlifyDeploymentConfig"
+
+      actions = [
+        "ssm:GetParameter"
+      ]
+
+      resources = [
+        var.netlify_site_id_parameter_arn,
+        var.netlify_auth_token_parameter_arn
+      ]
+    }
+  }
+
   # Shared policy (EC2 + EKS)
   statement {
     sid    = "ECRAuthentication"
@@ -155,7 +176,6 @@ data "aws_iam_policy_document" "jenkins_deploy" {
       ]
     }
   }
-
 }
 
 resource "aws_iam_role" "jenkins" {
