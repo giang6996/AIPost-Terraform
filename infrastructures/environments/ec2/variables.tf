@@ -213,6 +213,12 @@ variable "asg_max_size" {
 }
 
 
+variable "initial_backend_image_tag" {
+  description = "Initial AIPost Docker image tag"
+  type        = string
+  default     = "latest"
+}
+
 variable "root_domain_name" {
   description = "Root Route 53 domain."
   type        = string

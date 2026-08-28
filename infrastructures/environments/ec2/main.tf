@@ -83,7 +83,7 @@ module "rds_postgresql" {
 module "ssm_parameters" {
   source = "../../modules/ssm-parameters"
 
-  enable_eks_metadata = false
+  enable_ec2_metadata = true
 
   parameter_api_prefix = "${local.parameter_prefix}/backend"
 
@@ -96,7 +96,7 @@ module "ssm_parameters" {
   database_url              = local.database_url
   encryption_key            = var.encryption_key
   backend_asg_name          = module.ec2_asg.autoscaling_group_name
-  initial_backend_image_tag = "demo"
+  initial_backend_image_tag = var.initial_backend_image_tag
 
   ecr_repository_url = module.ecr.repository_url
   api_url            = var.api_domain_name

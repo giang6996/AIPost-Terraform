@@ -72,6 +72,11 @@ variable "ecr_repository_url" {
   type        = string
 }
 
+variable "enable_ec2_metadata" {
+  type    = bool
+  default = false
+}
+
 variable "backend_asg_name" {
   description = "Auto Scalling Group for AIPost Backend Application"
   type        = string

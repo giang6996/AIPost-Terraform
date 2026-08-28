@@ -237,7 +237,7 @@ resource "aws_ssm_parameter" "database_url_parameter_arn" {
 }
 
 resource "aws_ssm_parameter" "backend_asg_arn" {
-  count = var.backend_asg_arn != null ? 1 : 0
+  count = var.enable_ec2_metadata != null ? 1 : 0
   
   name  = "${var.parameter_infrastructure_prefix}/BACKEND_ASG_ARN"
   type  = "String"
