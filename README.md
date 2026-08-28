@@ -4,7 +4,7 @@ Terraform codebase for provisioning AWS infrastructure used by the **AIPost** pr
 
 ## Repo function
 
-Currently, the `ec2` environment provisions a seperated AWS stack for running AIPost:
+Currently, the `ec2` environment provisions a separated AWS stack for running AIPost:
 
 - VPC networking (public + private subnets, NAT)
 - Security groups for ALB / backend / RDS / Jenkins
@@ -20,7 +20,9 @@ Currently, the `ec2` environment provisions a seperated AWS stack for running AI
 ## Repo layout
 
 - `infrastructures/environments/ec2/`: runnable Terraform root module (EC2-based deployment)
-- `infrastructures/environments/eks/`: placeholder (files exist but are empty)
+- `infrastructures/environments/eks/`: runnable Terraform root module (EKS-based deployment)
+- `infrastructures/environments/jenkins/`: runnable Terraform root module (Jenkins on EC2)
+- `infrastructures/bootstrap/terraform-state/`: bootstrap Terraform remote state infrastructure (S3 bucket, etc.)
 - `infrastructures/modules/`: reusable Terraform modules
 
 ### Modules
@@ -57,7 +59,7 @@ Modules under `infrastructures/modules/` include:
 - Set at least:
   - `database_password` using local secret
   - `encryption_key` using local secret
-  - domain variables (`root_domain_name`, `frontend_domain_name`, `api_domain_name`) if you’re not using defaults
+  - domain variables (`root_domain_name`, `frontend_domain_name`, `api_domain_name`) if you're not using defaults
 
 2) Initialize and apply:
 
@@ -78,5 +80,6 @@ terraform apply
 ## Important notices
 
 - **Do not commit** `terraform.tfvars`, any `terraform.tfstate*`, or `.terraform/`.
-- The repo currently includes modules and patterns that create **billable AWS resources** (NAT Gateway, RDS, ALB, CloudFront, etc.). Review costs before applying.
-- For team usage, consider configuring a **remote backend** (S3 + DynamoDB) instead of local state.
+- The repo includes patterns that create **billable AWS resources** (NAT Gateway, RDS, ALB, CloudFront, etc.). Review costs before applying.
+- For team usage, use a **remote backend** (typically S3 + DynamoDB) instead of local state. This repo includes `infrastructures/bootstrap/terraform-state/` to help create the S3 bucket used by the `state.tf` backend blocks in each environment.
+- Note: the `infrastructures/environments/*/` folders currently contain local artifacts like `terraform.tfstate*`, `.terraform/`, `tfplan`, and `terraform.tfvars`. These should be removed from git history/tracking (e.g. `git rm --cached`) and kept only locally.
