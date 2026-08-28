@@ -22,7 +22,6 @@ override.tf.json
 *_override.tf.json
 
 .terraform
-*.hcl
 
 # CLI configuration
 .terraformrc
