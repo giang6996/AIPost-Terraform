@@ -203,6 +203,46 @@ resource "aws_vpc_security_group_ingress_rule" "jenkins_eks_api" {
   to_port     = 443
 }
 
+resource "aws_eks_access_entry" "jenkins" {
+  count = var.target_environment == "eks" ? 1 : 0
+
+  cluster_name = data.aws_ssm_parameter.eks_cluster_name[0].value
+
+  principal_arn = module.jenkins_iam.role_arn
+
+
+  type = "STANDARD"
+
+  tags = merge(
+    local.common_tags,
+    {
+      Purpose = "jenkins-cicd"
+    }
+  )
+}
+
+resource "aws_eks_access_policy_association" "jenkins" {
+  count = var.target_environment == "eks" ? 1 : 0
+
+  cluster_name = data.aws_ssm_parameter.eks_cluster_name[0].value
+
+  principal_arn = module.jenkins_iam.role_arn
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+
+  access_scope {
+    type = "namespace"
+
+    namespaces = [
+      "aipost"
+    ]
+  }
+
+  depends_on = [
+    aws_eks_access_entry.jenkins
+  ]
+}
+
 resource "aws_ssm_parameter" "netlify_auth_token" {
   count = var.enable_netlify ? 1 : 0
 
