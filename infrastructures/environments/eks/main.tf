@@ -218,10 +218,6 @@ module "dns_acm" {
   common_tags = local.common_tags
 }
 
-data "aws_ssm_parameter" "jenkins_role_arn" {
-  name = "${local.parameter_prefix}/jenkins/ROLE_ARN"
-}
-
 data "aws_route53_zone" "main" {
   name         = var.root_domain_name
   private_zone = false
