@@ -85,13 +85,15 @@ module "ssm_parameters" {
 
   enable_ec2_metadata = true
 
+  enable_eks_metadata = false
+
   parameter_api_prefix = "${local.parameter_prefix}/backend"
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
 
   parameter_network_prefix = "${local.parameter_prefix}/network"
 
-  parameter_infrastructure_prefix = "${local.parameter_prefix}/infrastrcture"
+  parameter_infrastructure_prefix = "${local.parameter_prefix}/infrastructure"
 
   database_url              = local.database_url
   encryption_key            = var.encryption_key

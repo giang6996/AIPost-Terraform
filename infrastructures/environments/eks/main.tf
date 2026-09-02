@@ -150,6 +150,8 @@ module "ssm_parameters" {
 
   enable_eks_metadata = true
 
+  enable_ec2_metadata = false
+
   parameter_api_prefix = "${local.parameter_prefix}/backend"
 
   parameter_frontend_prefix = "${local.parameter_prefix}/frontend"
