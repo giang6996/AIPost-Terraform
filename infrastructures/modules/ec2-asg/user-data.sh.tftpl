@@ -51,6 +51,5 @@ docker run -d \
   -e MEDIA_STORAGE_PROVIDER="${media_storage_provider}" \
   -e MEDIA_PUBLIC_BASE_URL="${media_public_base_url}" \
   -e S3_BUCKET_NAME="${s3_bucket_name}" \
-  -e AWS_REGION="${aws_region}" \
-  -e SSM_PARAMETER_PREFIX="${ssm_parameter_prefix}" \
+  -e AWS_REGION="${aws_region}"
   "$IMAGE_URI"
