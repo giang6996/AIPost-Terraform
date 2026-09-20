@@ -6,7 +6,7 @@ locals {
 
   network_prefix        = "${local.environment_prefix}/network"
   infrastructure_prefix = "${local.environment_prefix}/infrastructure"
-  jenkin_prefix = "${local.environment_prefix}/jenkins"
+  jenkin_prefix         = "${local.environment_prefix}/jenkins"
 
   common_tags = {
     Project     = local.project

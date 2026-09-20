@@ -1,7 +1,10 @@
-variable "name_prefix" {
+variable "aws_region" {
   type = string
 }
 
+variable "name_prefix" {
+  type = string
+}
 
 variable "ami_id" {
   type = string

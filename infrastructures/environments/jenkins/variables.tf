@@ -53,14 +53,15 @@ variable "enable_netlify" {
 }
 
 variable "netlify_auth_token" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "netlify_site_id" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
+
 
 variable "common_tags" {
   description = "Common tags applied to Jenkins resources."

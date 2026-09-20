@@ -123,6 +123,8 @@ module "jenkins_iam" {
 module "jenkins_ec2" {
   source = "../../modules/jenkins-ec2"
 
+  aws_region = var.aws_region
+
   name_prefix = local.name_prefix
 
   ami_id        = data.aws_ami.amazon_linux.id
@@ -277,10 +279,8 @@ resource "aws_ssm_parameter" "netlify_site_id" {
   )
 }
 
-
 resource "aws_ssm_parameter" "jenkins_role_arn" {
   name = "${local.jenkin_prefix}/ROLE_ARN"
-
   type  = "String"
   value = module.jenkins_iam.role_arn
 
