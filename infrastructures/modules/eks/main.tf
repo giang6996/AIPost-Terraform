@@ -6,6 +6,31 @@ resource "aws_iam_role" "eks_cluster" {
   tags = var.common_tags
 }
 
+data "aws_iam_policy_document" "cloudwatch_observability_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession"
+    ]
+  }
+}
+
+resource "aws_iam_role" "cloudwatch_observability" {
+  name = "${var.name_prefix}-cloudwatch-observability-role"
+
+  assume_role_policy = data.aws_iam_policy_document.cloudwatch_observability_assume_role.json
+
+  tags = var.common_tags
+}
+
+
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   role = aws_iam_role.eks_cluster.name
 
@@ -25,6 +50,11 @@ resource "aws_iam_role_policy_attachment" "eks_ecr_pull" {
 resource "aws_iam_role_policy_attachment" "eks_cni" {
   role       = aws_iam_role.eks_node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent" {
+  role       = aws_iam_role.cloudwatch_observability.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
 resource "aws_eks_cluster" "this" {
@@ -98,6 +128,23 @@ resource "aws_eks_addon" "secrets_store_provider" {
   addon_name = "aws-secrets-store-csi-driver-provider"
 
   addon_version = var.secrets_store_provider_version
+
+  tags = var.common_tags
+}
+
+resource "aws_eks_addon" "cloudwatch_observability" {
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = "amazon-cloudwatch-observability"
+
+  pod_identity_association {
+    service_account = "cloudwatch-agent"
+    role_arn        = aws_iam_role.cloudwatch_observability.arn
+  }
+
+  depends_on = [
+    aws_eks_addon.pod_identity_agent,
+    aws_iam_role_policy_attachment.cloudwatch_agent
+  ]
 
   tags = var.common_tags
 }
