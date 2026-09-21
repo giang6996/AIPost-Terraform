@@ -126,6 +126,16 @@ module "cloudwatch_logs" {
   common_tags    = local.common_tags
 }
 
+module "cloudwatch_alarms" {
+  source = "../../modules/cloudwatch-alarms"
+
+  name_prefix             = local.name_prefix
+  alb_arn_suffix          = module.alb.alb_arn_suffix
+  target_group_arn_suffix = module.alb.target_group_arn_suffix
+  backend_asg_name        = module.ec2_asg.autoscaling_group_name
+  rds_instance_id         = module.rds_postgresql.db_instance_id
+}
+
 module "ec2_iam" {
   source = "../../modules/ec2-iam"
 
