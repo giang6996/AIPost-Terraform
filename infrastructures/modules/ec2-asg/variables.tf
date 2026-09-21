@@ -61,6 +61,11 @@ variable "max_size" {
   default = 2
 }
 
+variable "cloudwatch_log_group_name" {
+  description = "CloudWatch Logs group used by the backend container."
+  type = string
+}
+
 variable "common_tags" {
   type    = map(string)
   default = {}

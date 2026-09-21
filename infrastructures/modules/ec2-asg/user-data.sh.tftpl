@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 dnf update -y
-dnf install -y docker awscli
+dnf install -y docker awscli amazon-cloudwatch-agent
 
 systemctl enable docker
 systemctl start docker
@@ -42,6 +42,10 @@ ENCRYPTION_KEY=$(aws ssm get-parameter \
 docker run -d \
   --name aipost-backend \
   --restart unless-stopped \
+  --log-driver=awslogs \
+  --log-opt awslogs-region="${aws_region}" \
+  --log-opt awslogs-group="${cloudwatch_log_group_name}" \
+  --log-opt awslogs-stream="backend/$(hostname)" \
   -p ${backend_port}:${backend_port} \
   -e PORT="${backend_port}" \
   -e NODE_ENV="production" \

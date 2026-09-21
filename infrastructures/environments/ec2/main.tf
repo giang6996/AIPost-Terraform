@@ -107,14 +107,14 @@ module "ssm_parameters" {
   s3_frontend_bucket       = module.s3_frontend.bucket_name
   frontend_tinymce_api_key = var.frontend_tinymce_api_key
 
-  vpc_id = module.networking.vpc_id
-  jenkins_subnet_id = module.networking.private_app_subnet_ids[0]
-  database_port = module.rds_postgresql.db_port
+  vpc_id                = module.networking.vpc_id
+  jenkins_subnet_id     = module.networking.private_app_subnet_ids[0]
+  database_port         = module.rds_postgresql.db_port
   rds_security_group_id = module.security.rds_security_group_id
-  ecr_repository_arn = module.ecr.repository_arn
-  frontend_bucket_arn = module.s3_frontend.bucket_arn
-  backend_asg_arn = module.ec2_asg.autoscaling_arn
-  
+  ecr_repository_arn    = module.ecr.repository_arn
+  frontend_bucket_arn   = module.s3_frontend.bucket_arn
+  backend_asg_arn       = module.ec2_asg.autoscaling_arn
+
   common_tags = local.common_tags
 }
 
@@ -187,6 +187,8 @@ module "ec2_asg" {
   container_image_tag = var.backend_image_tag
 
   backend_port = var.backend_port
+
+  cloudwatch_log_group_name = module.cloudwatch_logs.backend_log_group_name
 
   cors_origins           = var.cors_origins
   media_storage_provider = "s3"

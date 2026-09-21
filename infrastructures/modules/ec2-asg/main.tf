@@ -19,6 +19,7 @@ resource "aws_launch_template" "backend" {
         ecr_repository_url  = var.ecr_repository_url
         container_image_tag = var.container_image_tag
         backend_port        = var.backend_port
+        cloudwatch_log_group_name = var.cloudwatch_log_group_name
 
         # Additional env variable for user data
         cors_origins           = var.cors_origins
