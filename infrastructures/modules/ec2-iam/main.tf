@@ -127,6 +127,26 @@ data "aws_iam_policy_document" "backend_access" {
       var.ecr_repository_arn
     ]
   }
+
+  statement {
+    sid    = "PublishBackendHostMetrics"
+    effect = "Allow"
+
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "cloudwatch:namespace"
+
+      values = [
+        "AIPost/EC2"
+      ]
+    }
+  }
 }
 
 resource "aws_iam_policy" "backend_access" {
