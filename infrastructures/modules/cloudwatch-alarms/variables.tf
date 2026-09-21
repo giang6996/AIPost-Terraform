@@ -15,5 +15,9 @@ variable "backend_asg_name" {
 }
 
 variable "rds_instance_id"{
-    type        = string
+  type = string
+}
+
+variable "sns_topic_arn"{
+  type = string
 }

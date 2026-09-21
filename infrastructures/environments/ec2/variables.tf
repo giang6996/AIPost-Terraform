@@ -187,6 +187,11 @@ variable "retention_days" {
   default     = 7
 }
 
+variable "alert_email" {
+  description = "SNS email subscription to sent alert to"
+  type        = string
+}
+
 variable "backend_instance_type" {
   type    = string
   default = "t3.micro"

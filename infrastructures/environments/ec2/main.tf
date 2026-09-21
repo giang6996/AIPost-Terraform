@@ -118,6 +118,14 @@ module "ssm_parameters" {
   common_tags = local.common_tags
 }
 
+module "sns" {
+  source = "../../modules/sns"
+
+  name_prefix = local.name_prefix
+  alert_email = var.alert_email
+  common_tags = local.common_tags
+}
+
 module "cloudwatch_logs" {
   source = "../../modules/cloudwatch-logs"
 
@@ -134,7 +142,10 @@ module "cloudwatch_alarms" {
   target_group_arn_suffix = module.alb.target_group_arn_suffix
   backend_asg_name        = module.ec2_asg.autoscaling_group_name
   rds_instance_id         = module.rds_postgresql.db_instance_id
+  sns_topic_arn           = module.sns.sns_topic_arn
 }
+
+
 
 module "ec2_iam" {
   source = "../../modules/ec2-iam"
