@@ -141,11 +141,22 @@ module "cloudwatch_alarms" {
   alb_arn_suffix          = module.alb.alb_arn_suffix
   target_group_arn_suffix = module.alb.target_group_arn_suffix
   backend_asg_name        = module.ec2_asg.autoscaling_group_name
-  rds_instance_id         = module.rds_postgresql.db_instance_id
+  rds_instance_identifier = module.rds_postgresql.db_identifier
   sns_topic_arn           = module.sns.sns_topic_arn
 }
 
+module "cloudwatch_dashboard" {
+  source = "../../modules/cloudwatch-dashboard"
 
+  name_prefix = local.name_prefix
+  aws_region  = var.aws_region
+
+  alb_arn_suffix          = module.alb.alb_arn_suffix
+  target_group_arn_suffix = module.alb.target_group_arn_suffix
+  backend_asg_name        = module.ec2_asg.autoscaling_group_name
+  rds_instance_identifier = module.rds_postgresql.db_identifier
+
+}
 
 module "ec2_iam" {
   source = "../../modules/ec2-iam"

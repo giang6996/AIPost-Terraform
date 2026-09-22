@@ -106,7 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_free_storage_low" {
   comparison_operator = "LessThanThreshold"
 
   dimensions = {
-    DBInstanceIdentifier = var.rds_instance_id
+    DBInstanceIdentifier = var.rds_instance_identifier
   }
 
   treat_missing_data = "notBreaching"

@@ -147,6 +147,38 @@ data "aws_iam_policy_document" "backend_access" {
       ]
     }
   }
+
+  statement {
+    sid    = "GetBackendHostMetrics"
+    effect = "Allow"
+
+    actions = [
+      "cloudwatch:GetMetricStatistics",
+      "cloudwatch:ListMetrics"
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "cloudwatch:namespace"
+
+      values = [
+        "AIPost/EC2"
+      ]
+    }
+  }
+
+  statement {
+    sid    = "ReadEC2MetadataForMetrics"
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeTags"
+    ]
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "backend_access" {

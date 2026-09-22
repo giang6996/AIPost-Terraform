@@ -14,7 +14,7 @@ variable "backend_asg_name" {
   type = string
 }
 
-variable "rds_instance_id"{
+variable "rds_instance_identifier"{
   type = string
 }
 

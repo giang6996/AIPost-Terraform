@@ -18,9 +18,14 @@ output "db_port" {
   value       = aws_db_instance.this.port
 }
 
-output "database_name" {
+output "db_name" {
   description = "Initial PostgreSQL database name."
-  value       = var.database_name
+  value       = aws_db_instance.this.db_name
+}
+
+output "db_identifier" {
+  description = "RDS Initial Identifier"
+  value = aws_db_instance.this.identifier
 }
 
 output "master_username" {

@@ -12,9 +12,12 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'EOF'
   "metrics": {
     "namespace": "AIPost/EC2",
     "append_dimensions": {
-      "InstanceId": "$${aws:InstanceId}".
+      "InstanceId": "$${aws:InstanceId}",
       "AutoScalingGroupName": "$${aws:AutoScalingGroupName}"
     },
+    "aggregation_dimensions": [
+      ["AutoScalingGroupName"]
+    ],
     "metrics_collected": {
       "mem": {
         "measurement": [
